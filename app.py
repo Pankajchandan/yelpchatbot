@@ -36,7 +36,7 @@ def webhook():
         # else reco = fallback(text)
 
         slack_payload = {
-            "text": text
+            "text": "test"
             }
         return Response(json.dumps(slack_payload), status=200, mimetype='application/json')
     else:
