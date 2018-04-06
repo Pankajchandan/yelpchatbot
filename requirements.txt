@@ -1,2 +1,7 @@
 gunicorn
 flask
+requests
+ConfigParser
+json
+logging
+datetime
