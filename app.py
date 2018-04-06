@@ -4,7 +4,7 @@ import json
 import logging
 from datetime import datetime
 import requests
-from flask import Flask, request
+from flask import Flask, request, Response
 import ConfigParser
 
 app = Flask(__name__)
@@ -25,8 +25,10 @@ def verify():
 
 @app.route('/', methods=['POST'])
 def webhook():
-    data = request.get_json()
-    log.debug("%s", data)
+    token = request.form.get('token')
+    text = request.form.get('text')
+    trigger_word = request.form.get('trigger_word')
+    log.debug("token: %s, text: %s, word: %s",token,text,trigger_word)
 
     slack_payload = {
         "text": "test"
