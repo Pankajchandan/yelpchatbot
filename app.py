@@ -1,3 +1,5 @@
+# -*- coding: utf-8 -*-
+
 import os
 import sys
 import json
@@ -6,6 +8,8 @@ from datetime import datetime
 import requests
 from flask import Flask, request, Response
 import ConfigParser
+
+from yelp import query_api
 
 app = Flask(__name__)
 
@@ -18,6 +22,8 @@ SLACK_URL = config.get('url','slack')
 DIALOG_URL = config.get('url','dialog')
 YELP_URL = config.get('url','yelp')
 SLACK_VARIFY_TOKEN = config.get('tokens', 'slack_verify_token')
+TRIGGER_WORDS = set('yelp')
+
 
 @app.route('/', methods=['GET'])
 def verify():
@@ -28,16 +34,16 @@ def verify():
 def webhook():
     if SLACK_VARIFY_TOKEN == request.form.get('token'):
         text = request.form.get('text')
-        log.debug("text: %s",text)
+        log.debug("text recieved: %s",text)
+        args = text.split()
+        
+        # call dialogflow to getkeywords
 
-        # intent = get_intent(DIALOG_URL, text)
-        # if valid intent:
-        # reco = get_reco(YELP_URL, text)
-        # else reco = fallback(text)
+        if args[0].lower() in TRIGGER_WORDS:
+            slack_payload = query_api(args[0], args[1], ' '.join(args[2:]))
+        else:
+            slack_payload = {'text': 'invalid action word'}
 
-        slack_payload = {
-            "text": "test"
-            }
         return Response(json.dumps(slack_payload), status=200, mimetype='application/json')
     else:
         log.warning("message from unknown sources")
