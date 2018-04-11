@@ -19,9 +19,8 @@ config = ConfigParser.ConfigParser()
 config.read("config.ini")
 
 SLACK_URL = config.get('url','slack')
-DIALOG_URL = config.get('url','dialog')
-YELP_URL = config.get('url','yelp')
 SLACK_VARIFY_TOKEN = config.get('tokens', 'slack_verify_token')
+
 TRIGGER_WORDS = set('yelp')
 
 
