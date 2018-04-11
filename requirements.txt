@@ -3,5 +3,3 @@ flask
 requests
 argparse
 pprint
-urllib
-urllib2
