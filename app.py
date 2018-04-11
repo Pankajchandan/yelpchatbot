@@ -38,10 +38,10 @@ def webhook():
         
         # call dialogflow to getkeywords
 
-        if args[0].lower() in TRIGGER_WORDS:
+        if args[0].lower() == 'yelp':
             slack_payload = query_api(args[0], args[1], ' '.join(args[2:]))
         else:
-            slack_payload = {'text': 'invalid action word'}
+            slack_payload = {u'text': u'invalid action word'}
 
         return Response(json.dumps(slack_payload), status=200, mimetype='application/json')
     else:
