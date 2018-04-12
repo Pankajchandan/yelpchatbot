@@ -67,6 +67,8 @@ def get_reviews(api_key, business_id):
 def query_api(action=DEFAULT_ACTION, term=DEFAULT_TERM, location=DEFAULT_LOCATION):
     # serach for buisnessID
     response = search(API_KEY, term, location)
+    log.info('printing business search result')
+    log.debug(pprint.pformat(response))
     businesses = response.get('businesses')
     
     if not businesses:
@@ -87,6 +89,11 @@ def query_api(action=DEFAULT_ACTION, term=DEFAULT_TERM, location=DEFAULT_LOCATIO
         log.info(u'Result for business "%s" found:',business_id)
     else:
         response = json.dumps({'text': 'incorrect action word'})
+    
+    log.info("printing response")
+    log.debug(pprint.pformat(response))
+    log.info("printing review")
+    log.debug(pprint.pformat(review))
 
     return slack_packer(action, response, review)
 
