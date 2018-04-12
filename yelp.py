@@ -70,8 +70,10 @@ def query_api(action=DEFAULT_ACTION, term=DEFAULT_TERM, location=DEFAULT_LOCATIO
     businesses = response.get('businesses')
     
     if not businesses:
-        log.info(u'No businesses for %s in %s found.',term, location)
-        return
+        text = u'No businesses for {} in {} found'.format(term, location)
+        log.info(text)
+        response = {u'text': text}
+        return response
 
     # take the topresult
     business_id = businesses[0]['id']
