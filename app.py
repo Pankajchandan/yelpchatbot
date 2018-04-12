@@ -1,5 +1,11 @@
 # -*- coding: utf-8 -*-
 
+"""
+This is app.py that runs the http server. This runs
+as a process on heroku cloud infrastructure
+"""
+
+
 import os
 import sys
 import json
@@ -22,8 +28,6 @@ config.read("config.ini")
 SLACK_URL = config.get('url','slack')
 SLACK_VARIFY_TOKEN = config.get('tokens', 'slack_verify_token')
 
-TRIGGER_WORDS = set('yelp')
-
 
 @app.route('/', methods=['GET'])
 def verify():
@@ -44,6 +48,7 @@ def webhook():
         # call dialogflow to getkeywords
 
         if args[0].lower() == 'yelp':
+            log.info("calling yelp api..")
             slack_payload = query_api(args[0], args[1], ' '.join(args[2:]))
         else:
             slack_payload = {u'text': u'invalid action word'}
@@ -64,7 +69,7 @@ def pretty_print_POST(req):
         '-----------START-----------',
         req.method + ' ' + req.url,
         '\n'.join('{}: {}'.format(k, v) for k, v in req.headers.items()),
-        req.form.to_dict(),
+        '\n'.join('{}: {}'.format(k, v) for k, v in req.form.to_dict().items()),
     ))
 
 

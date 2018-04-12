@@ -33,6 +33,7 @@ DEFAULT_LOCATION = 'San Francisco, CA'
 SEARCH_LIMIT = 3
 DEFAULT_ACTION = 'yelp'
 
+
 def request(host, path, api_key, url_params=None):
     url_params = url_params or {}
     url = '{0}{1}'.format(host, quote(path.encode('utf8')))
@@ -65,12 +66,17 @@ def get_reviews(api_key, business_id):
     return request(API_HOST, review_path, api_key)
 
 def query_api(action=DEFAULT_ACTION, term=DEFAULT_TERM, location=DEFAULT_LOCATION):
+    """
+    querries the yelp fusion apis. The following order is performed 
+    -> buisness is searched and id is extracted then 
+    -> the top result business lookup is performed
+    -> then the reviews for that business is called in that order
+    """
     # serach for buisnessID
     response = search(API_KEY, term, location)
     log.info('printing business search result')
     log.debug(pprint.pformat(response))
     businesses = response.get('businesses')
-    
     if not businesses:
         text = u'No businesses for {} in {} found'.format(term, location)
         log.info(text)
@@ -79,13 +85,11 @@ def query_api(action=DEFAULT_ACTION, term=DEFAULT_TERM, location=DEFAULT_LOCATIO
 
     # take the topresult
     business_id = businesses[0]['id']
-
     if action.lower()=='yelp':
         log.info(u' %s businesses found, querying business info ' \
             'for the top 1 result "%s" ...', len(businesses), business_id)
         response = get_business(API_KEY, business_id)
         review = get_reviews(API_KEY, business_id)
-
         log.info(u'Result for business "%s" found:',business_id)
     else:
         response = json.dumps({'text': 'incorrect action word'})
@@ -95,10 +99,14 @@ def query_api(action=DEFAULT_ACTION, term=DEFAULT_TERM, location=DEFAULT_LOCATIO
     log.info("printing review")
     log.debug(pprint.pformat(review))
 
+    # pack it in slack message format and return
     return slack_packer(action, response, review)
 
 
 def slack_packer(action, response, review):
+    """
+    insert fields in the predefined slack template
+    """
     temp = dict()
     if action.lower()=='yelp':
         temp = template.SLACK_TEMPLATE
@@ -119,8 +127,10 @@ def slack_packer(action, response, review):
 
 # for debugging purpose
 def main():
+    """
+    >>> python yelp.py --action 'yelp' --term 'bars' --location 'SF, ca'
+    """
     parser = argparse.ArgumentParser()
-
     parser.add_argument('-a', '--action', dest='action', default=DEFAULT_ACTION,
                         type=str, help='action (default: %(default)s)')
     parser.add_argument('-q', '--term', dest='term', default=DEFAULT_TERM,
