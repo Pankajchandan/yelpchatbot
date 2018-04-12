@@ -64,7 +64,7 @@ def pretty_print_POST(req):
         '-----------START-----------',
         req.method + ' ' + req.url,
         '\n'.join('{}: {}'.format(k, v) for k, v in req.headers.items()),
-        req.body,
+        req.form.to_dict(),
     ))
 
 
