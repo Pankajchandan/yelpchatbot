@@ -98,7 +98,7 @@ def slack_packer(action, response, review):
 	temp['attachments'][0]['fields'][0]['value'] = response['rating']
 	temp['attachments'][0]['fields'][1]['value'] = response['price']
 	temp['attachments'][0]['fields'][2]['value'] = response['review_count']
-	temp['attachments'][0]['fields'][3]['value'] = response['phone']
+	temp['attachments'][0]['fields'][3]['value'] = response['display_phone']
 	temp['attachments'][0]['title'] = response['name']
 	temp['attachments'][0]['image_url'] = response['image_url']
 	temp['attachments'][1]['author_name'] = review['reviews'][0]['user']['name']
