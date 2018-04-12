@@ -6,6 +6,7 @@ SLACK_TEMPLATE = {
     u'attachments': [
         {
             u'title': None,
+            u'title_link': None,
             u'fields': [
                 {
                     u'title': 'Rating',
@@ -34,6 +35,7 @@ SLACK_TEMPLATE = {
         },
         {
             u'title': u'Customer Review',
+            u'title_link': None,
             u'author_name': None,
             u'author_icon': u'http://a.slack-edge.com/7f18/img/api/homepage_custom_integrations-2x.png',
             u'text': None,

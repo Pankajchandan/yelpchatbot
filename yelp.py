@@ -85,8 +85,6 @@ def query_api(action=DEFAULT_ACTION, term=DEFAULT_TERM, location=DEFAULT_LOCATIO
         log.info(u'Result for business "%s" found:',business_id)
     else:
         response = json.dumps({'text': 'incorrect action word'})
-    pprint.pprint(response, indent=2)
-    pprint.pprint(review, indent=2)
 
     return slack_packer(action, response, review)
 
@@ -100,12 +98,13 @@ def slack_packer(action, response, review):
 	temp['attachments'][0]['fields'][2]['value'] = response['review_count']
 	temp['attachments'][0]['fields'][3]['value'] = response['display_phone']
 	temp['attachments'][0]['title'] = response['name']
+    temp['attachments'][0]['title_link'] = response['url']
 	temp['attachments'][0]['image_url'] = response['image_url']
 	temp['attachments'][1]['author_name'] = review['reviews'][0]['user']['name']
 	temp['attachments'][1]['text'] = review['reviews'][0]['text']
+    temp['attachments'][1]['title_link'] = review['reviews'][0]['url']
 	temp['attachments'][1]['image_url'] = review['reviews'][0]['user']['image_url']
 
-    pprint.pprint(temp, indent=2)
     return temp
 
 
