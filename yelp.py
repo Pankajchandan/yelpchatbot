@@ -1,5 +1,9 @@
 # -*- coding: utf-8 -*-
 
+"""
+This is yelp.py and has the logic to yelp api communications
+"""
+
 import argparse
 import json
 import pprint
