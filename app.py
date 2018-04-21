@@ -17,6 +17,7 @@ import ConfigParser
 import pprint
 
 from yelp import query_api
+from dialogflow import dialogflow_api
 
 app = Flask(__name__)
 
@@ -44,12 +45,19 @@ def webhook():
     if SLACK_VARIFY_TOKEN == request.form.get('token'):
         text = request.form.get('text')
         args = text.split()
-        
-        # call dialogflow to getkeywords
+        terms, location = None, None
 
         if args[0].lower() == 'yelp':
+            log.info("calling dialogflow api")
+            try:
+                term, location = dialogflow_api(args[1:])
+            except Exception as e:
+                pass
             log.info("calling yelp api..")
-            slack_payload = query_api(args[0], args[1], ' '.join(args[2:]))
+            if terms not None and location not None:
+                slack_payload = query_api(args[0], term, location)
+            else:
+                slack_payload = query_api(args[0], args[1], ' '.join(args[2:]))
         else:
             slack_payload = {u'text': u'invalid action word'}
         
