@@ -54,7 +54,7 @@ def webhook():
             except Exception as e:
                 pass
             log.info("calling yelp api..")
-            if terms not None and location not None:
+            if terms != None and location != None:
                 slack_payload = query_api(args[0], term, location)
             else:
                 slack_payload = query_api(args[0], args[1], ' '.join(args[2:]))
