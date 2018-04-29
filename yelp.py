@@ -114,13 +114,13 @@ def slack_packer(action, response, review):
     temp = dict()
     if action.lower()=='yelp':
         temp = template.SLACK_TEMPLATE
-        temp['attachments'][0]['fields'][0]['value'] = response['rating']
-        temp['attachments'][0]['fields'][1]['value'] = response['price']
-        temp['attachments'][0]['fields'][2]['value'] = response['review_count']
-        temp['attachments'][0]['fields'][3]['value'] = response['display_phone']
-        temp['attachments'][0]['title'] = response['name']
-        temp['attachments'][0]['title_link'] = response['url']
-        temp['attachments'][0]['image_url'] = response['image_url']
+        temp['attachments'][0]['fields'][0]['value'] = response.get('rating', 'NA')
+        temp['attachments'][0]['fields'][1]['value'] = response.get('price', 'NA')
+        temp['attachments'][0]['fields'][2]['value'] = response.get('review_count', 'NA')
+        temp['attachments'][0]['fields'][3]['value'] = response.get('display_phone', 'NA')
+        temp['attachments'][0]['title'] = response.get('name', 'NA')
+        temp['attachments'][0]['title_link'] = response.get('url', 'NA')
+        temp['attachments'][0]['image_url'] = response.get('image_url', 'NA')
         temp['attachments'][1]['author_name'] = review['reviews'][0]['user']['name']
         temp['attachments'][1]['text'] = review['reviews'][0]['text']
         temp['attachments'][1]['title_link'] = review['reviews'][0]['url']
