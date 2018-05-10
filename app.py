@@ -15,14 +15,16 @@ import requests
 from flask import Flask, request, Response
 import ConfigParser
 import pprint
+import coloredlogs
 
 from yelp import query_api
 from dialogflow import dialogflow_api
 
 app = Flask(__name__)
 
-logging.basicConfig(stream=sys.stdout, format='%(asctime)s - %(name)s - %(levelname)s - %(message)s', level=logging.DEBUG)                                                  
+logging.basicConfig(stream=sys.stdout, format='%(asctime)s - %(name)s - %(levelname)s - %(message)s', level=logging.DEBUG)                  
 log = logging.getLogger(__name__)
+coloredlogs.install(level='DEBUG')
 config = ConfigParser.ConfigParser()
 config.read("config.ini")
 
@@ -50,7 +52,7 @@ def webhook():
         if args[0].lower() == 'yelp':
             log.info("calling dialogflow api")
             try:
-                term, location = dialogflow_api(args[1:])
+                term, location, conf = dialogflow_api(args[1:])
             except Exception as e:
                 pass
             log.info("calling yelp api..")
@@ -60,9 +62,6 @@ def webhook():
                 slack_payload = query_api(args[0], args[1], ' '.join(args[2:]))
         else:
             slack_payload = {u'text': u'invalid action word'}
-        
-        log.info("printing the JSON sent to slack")
-        log.debug(pprint.pformat(slack_payload))
 
         return Response(json.dumps(slack_payload), status=200, mimetype='application/json')
     else:

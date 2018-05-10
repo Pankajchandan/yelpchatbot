@@ -8,10 +8,12 @@ import requests
 from flask import Flask, request, Response
 import ConfigParser
 import pprint
+import coloredlogs
 import apiai
 
 logging.basicConfig(stream=sys.stdout, format='%(asctime)s - %(name)s - %(levelname)s - %(message)s', level=logging.DEBUG)
 log = logging.getLogger(__name__)
+coloredlogs.install(level='DEBUG')
 config = ConfigParser.ConfigParser()
 config.read("config.ini")
 
@@ -29,9 +31,9 @@ def dialogflow_api(query=DEFAULT_QUERY):
     log.debug(pprint.pformat(response))
     pprint.pprint(response)
     message1 = response['result']['parameters']['Restaurant'][0]
-    message2 = response['result']['parameters']['location']['city']
-    
-    return message1,message2
+    message2 = response['result']['parameters']['location'][0]['city']
+    confidence = response['result']['score']
+    return message1,message2,confidence
 
 # for debugging purpose
 def main():
@@ -44,8 +46,10 @@ def main():
     input_values = parser.parse_args()
 
     try:
-        rest, city = dialogflow_api(input_values.query)
-        print "restaurants: {}, location: {}".format(rest, city)
+        rest, city, conf = dialogflow_api(input_values.query)
+        log.info("location returned: %s", city)
+        log.info("term returned: %s", rest)
+        log.info("confidence: %s", conf)
     except Exception as msg:
         log.error("%s", msg)
 

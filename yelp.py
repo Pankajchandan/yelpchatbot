@@ -15,10 +15,11 @@ from urllib import quote
 from urllib import urlencode
 import ConfigParser
 import logging
-
+import coloredlogs
 import template
 
 # set loggging and configs
+coloredlogs.install(level='DEBUG')
 logging.basicConfig(stream=sys.stdout, format='%(asctime)s - %(name)s - %(levelname)s - %(message)s', level=logging.DEBUG)
 log = logging.getLogger(__name__)
 
@@ -45,7 +46,7 @@ def request(host, path, api_key, url_params=None):
         'Authorization': 'Bearer %s' % api_key,
     }
 
-    log.info(u'Querying %s ...', url)
+    log.info(u'Querying %s', url)
 
     response = requests.request('GET', url, headers=headers, params=url_params)
 
@@ -78,7 +79,7 @@ def query_api(action=DEFAULT_ACTION, term=DEFAULT_TERM, location=DEFAULT_LOCATIO
     """
     # serach for buisnessID
     response = search(API_KEY, term, location)
-    log.info('printing business search result')
+    log.info('printing search results...')
     log.debug(pprint.pformat(response))
     businesses = response.get('businesses')
     if not businesses:
@@ -98,9 +99,9 @@ def query_api(action=DEFAULT_ACTION, term=DEFAULT_TERM, location=DEFAULT_LOCATIO
     else:
         response = json.dumps({'text': 'incorrect action word'})
     
-    log.info("printing response")
+    log.info("printing details of the top buisness lookup...")
     log.debug(pprint.pformat(response))
-    log.info("printing review")
+    log.info("printing review of the top business...")
     log.debug(pprint.pformat(review))
 
     # pack it in slack message format and return
@@ -125,7 +126,8 @@ def slack_packer(action, response, review):
         temp['attachments'][1]['text'] = review['reviews'][0]['text']
         temp['attachments'][1]['title_link'] = review['reviews'][0]['url']
         temp['attachments'][1]['image_url'] = review['reviews'][0]['user']['image_url']
-
+    log.info("printing response sent to slack...")
+    log.debug(pprint.pformat(temp))
     return temp
 
 
